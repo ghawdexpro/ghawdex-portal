@@ -1,38 +1,46 @@
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/supabase/auth";
+import { getDB } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const session = await auth();
-    if (session?.user?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await requireAdmin();
 
-    const pages = await prisma.wikiPage.findMany({
+    const db = await getDB();
+    const pages = await db.wikiPage.findMany({
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(pages);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (session?.user?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await requireAdmin();
 
     const { title, slug, category, content, author } = await request.json();
 
-    const page = await prisma.wikiPage.create({
+    const db = await getDB();
+    const page = await db.wikiPage.create({
       data: { title, slug, category, content, author, published: true },
     });
 
     return NextResponse.json(page);
   } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     if (error.code === "P2002") {
       return NextResponse.json({ error: "Slug already exists" }, { status: 400 });
     }

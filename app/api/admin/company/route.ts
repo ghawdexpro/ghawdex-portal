@@ -1,45 +1,53 @@
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/supabase/auth";
+import { getDB } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const session = await auth();
-    if (session?.user?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await requireAdmin();
 
-    const company = await prisma.companyInfo.findFirst();
+    const db = await getDB();
+    const company = await db.companyInfo.findFirst();
     return NextResponse.json(company || {});
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     return NextResponse.json({ error: "Failed to fetch company info" }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (session?.user?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await requireAdmin();
 
     const { mission, vision, values } = await request.json();
 
-    const existingCompany = await prisma.companyInfo.findFirst();
+    const db = await getDB();
+    const existingCompany = await db.companyInfo.findFirst();
 
     if (existingCompany) {
-      const updated = await prisma.companyInfo.update({
+      const updated = await db.companyInfo.update({
         where: { id: existingCompany.id },
         data: { mission, vision, values },
       });
       return NextResponse.json(updated);
     } else {
-      const created = await prisma.companyInfo.create({
+      const created = await db.companyInfo.create({
         data: { mission, vision, values },
       });
       return NextResponse.json(created);
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     return NextResponse.json({ error: "Failed to update company info" }, { status: 500 });
   }
 }

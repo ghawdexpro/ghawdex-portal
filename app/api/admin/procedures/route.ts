@@ -1,38 +1,46 @@
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/supabase/auth";
+import { getDB } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const session = await auth();
-    if (session?.user?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await requireAdmin();
 
-    const procedures = await prisma.procedure.findMany({
+    const db = await getDB();
+    const procedures = await db.procedure.findMany({
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(procedures);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (session?.user?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await requireAdmin();
 
     const { title, category, content, priority } = await request.json();
 
-    const procedure = await prisma.procedure.create({
+    const db = await getDB();
+    const procedure = await db.procedure.create({
       data: { title, category, content, priority },
     });
 
     return NextResponse.json(procedure);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }

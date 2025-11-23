@@ -1,38 +1,46 @@
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/supabase/auth";
+import { getDB } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const session = await auth();
-    if (session?.user?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await requireAdmin();
 
-    const members = await prisma.teamMember.findMany({
+    const db = await getDB();
+    const members = await db.teamMember.findMany({
       orderBy: { name: "asc" },
     });
     return NextResponse.json(members);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (session?.user?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await requireAdmin();
 
     const { name, title, department, email, phone, bio } = await request.json();
 
-    const member = await prisma.teamMember.create({
+    const db = await getDB();
+    const member = await db.teamMember.create({
       data: { name, title, department, email, phone, bio },
     });
 
     return NextResponse.json(member);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }

@@ -1,15 +1,13 @@
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/supabase/auth";
+import { getDB } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const session = await auth();
-    if (session?.user?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await requireAdmin();
 
-    const users = await prisma.user.findMany({
+    const db = await getDB();
+    const users = await db.user.findMany({
       select: {
         id: true,
         email: true,
@@ -20,21 +18,25 @@ export async function GET() {
       },
     });
     return NextResponse.json(users);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (session?.user?.role !== "ADMIN") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await requireAdmin();
 
     const { email, password, name, role, department } = await request.json();
 
-    const user = await prisma.user.create({
+    const db = await getDB();
+    const user = await db.user.create({
       data: {
         email,
         password,
@@ -51,6 +53,12 @@ export async function POST(request: Request) {
       role: user.role,
     });
   } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     if (error.code === "P2002") {
       return NextResponse.json({ error: "Email already exists" }, { status: 400 });
     }

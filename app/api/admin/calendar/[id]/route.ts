@@ -1,5 +1,5 @@
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/supabase/auth";
+import { getDB } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(
@@ -7,25 +7,22 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    await requireAdmin();
 
     const { id } = await params;
-    await prisma.calendarEvent.delete({
+    const db = await getDB();
+    await db.calendarEvent.delete({
       where: { id },
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Failed to delete event:", error);
-    return NextResponse.json(
-      { error: "Failed to delete event" },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    return NextResponse.json({ error: "Failed to delete event" }, { status: 500 });
   }
 }

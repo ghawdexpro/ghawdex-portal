@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 

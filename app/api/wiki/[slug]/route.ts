@@ -1,4 +1,5 @@
-import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/supabase/auth";
+import { getDB } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET(
@@ -6,8 +7,11 @@ export async function GET(
   context: { params: Promise<{ slug: string }> }
 ) {
   try {
+    await requireAuth();
+
     const params = await context.params;
-    const page = await prisma.wikiPage.findUnique({
+    const db = await getDB();
+    const page = await db.wikiPage.findUnique({
       where: { slug: params.slug },
     });
 
@@ -16,7 +20,10 @@ export async function GET(
     }
 
     return NextResponse.json(page);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     return NextResponse.json({ error: "Failed to fetch page" }, { status: 500 });
   }
 }

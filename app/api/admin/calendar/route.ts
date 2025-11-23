@@ -1,40 +1,31 @@
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { requireAdmin } from "@/lib/supabase/auth";
+import { getDB } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    await requireAdmin();
 
-    const events = await prisma.calendarEvent.findMany({
+    const db = await getDB();
+    const events = await db.calendarEvent.findMany({
       orderBy: { startDate: "desc" },
     });
 
     return NextResponse.json(events);
-  } catch (error) {
-    console.error("Failed to fetch events:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch events" },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    return NextResponse.json({ error: "Failed to fetch events" }, { status: 500 });
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    await requireAdmin();
 
     const body = await req.json();
     const { title, description, type, startDate, endDate } = body;
@@ -46,7 +37,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const event = await prisma.calendarEvent.create({
+    const db = await getDB();
+    const event = await db.calendarEvent.create({
       data: {
         title,
         description: description || null,
@@ -57,11 +49,13 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(event, { status: 201 });
-  } catch (error) {
-    console.error("Failed to create event:", error);
-    return NextResponse.json(
-      { error: "Failed to create event" },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error.message.includes("Admin access required")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    return NextResponse.json({ error: "Failed to create event" }, { status: 500 });
   }
 }

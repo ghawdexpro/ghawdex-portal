@@ -1,4 +1,3 @@
-import { auth } from "@/auth";
 import { Sidebar } from "@/components/Sidebar";
 
 export const dynamic = "force-dynamic";

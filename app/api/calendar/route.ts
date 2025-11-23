@@ -1,18 +1,21 @@
-import { prisma } from "@/lib/prisma";
+import { requireAuth } from "@/lib/supabase/auth";
+import { getDB } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const events = await prisma.calendarEvent.findMany({
+    await requireAuth();
+
+    const db = await getDB();
+    const events = await db.calendarEvent.findMany({
       orderBy: { startDate: "asc" },
     });
 
     return NextResponse.json(events);
-  } catch (error) {
-    console.error("Failed to fetch events:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch events" },
-      { status: 500 }
-    );
+  } catch (error: any) {
+    if (error.message === "Unauthorized") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return NextResponse.json({ error: "Failed to fetch events" }, { status: 500 });
   }
 }
