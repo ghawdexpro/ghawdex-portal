@@ -31,9 +31,9 @@ export default function ProceduresPage() {
     }
   };
 
-  const categories = [...new Set(procedures.map((p) => p.category))];
+  const categories = [...new Set(procedures.map((p: any) => p.category))];
   const filteredProcedures = selectedCategory
-    ? procedures.filter((p) => p.category === selectedCategory)
+    ? procedures.filter((p: any) => p.category === selectedCategory)
     : procedures;
 
   const priorityColor = (priority: string) => {
@@ -66,7 +66,7 @@ export default function ProceduresPage() {
           >
             All Procedures
           </button>
-          {categories.map((category) => (
+          {categories.map((category: any) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
@@ -90,7 +90,7 @@ export default function ProceduresPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {filteredProcedures.map((procedure) => (
+          {filteredProcedures.map((procedure: any) => (
             <div key={procedure.id} className="bg-slate-700 rounded-lg p-6">
               <div className="flex items-start justify-between gap-4 mb-4">
                 <div>

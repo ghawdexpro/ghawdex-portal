@@ -34,9 +34,9 @@ export default function GoalsPage() {
     }
   };
 
-  const periods = [...new Set(goals.map((g) => g.period))];
+  const periods = [...new Set(goals.map((g: any) => g.period))];
   const filteredGoals = selectedPeriod
-    ? goals.filter((g) => g.period === selectedPeriod)
+    ? goals.filter((g: any) => g.period === selectedPeriod)
     : goals;
 
   return (
@@ -56,7 +56,7 @@ export default function GoalsPage() {
           >
             All Goals
           </button>
-          {periods.map((period) => (
+          {periods.map((period: any) => (
             <button
               key={period}
               onClick={() => setSelectedPeriod(period)}
@@ -80,7 +80,7 @@ export default function GoalsPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {filteredGoals.map((goal) => (
+          {filteredGoals.map((goal: any) => (
             <div key={goal.id} className="bg-slate-700 rounded-lg p-6">
               <div className="mb-4">
                 <h3 className="text-xl font-semibold text-white">{goal.title}</h3>

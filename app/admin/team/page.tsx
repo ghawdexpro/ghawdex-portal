@@ -151,7 +151,7 @@ export default function AdminTeamPage() {
 
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-lg font-semibold text-white mb-4">Team Members ({members.length})</h2>
-          {members.map((member) => (
+          {members.map((member: any) => (
             <div key={member.id} className="bg-slate-700 rounded-lg p-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1">

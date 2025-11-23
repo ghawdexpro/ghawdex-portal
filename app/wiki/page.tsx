@@ -34,11 +34,11 @@ export default function WikiPage() {
     }
   };
 
-  const categories = [...new Set(pages.map((p) => p.category))];
+  const categories = [...new Set(pages.map((p: any) => p.category))];
 
   let filteredPages = pages;
   if (selectedCategory) {
-    filteredPages = filteredPages.filter((p) => p.category === selectedCategory);
+    filteredPages = filteredPages.filter((p: any) => p.category === selectedCategory);
   }
   if (searchTerm) {
     filteredPages = filteredPages.filter(
@@ -72,7 +72,7 @@ export default function WikiPage() {
           >
             All Pages
           </button>
-          {categories.map((category) => (
+          {categories.map((category: any) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
@@ -98,7 +98,7 @@ export default function WikiPage() {
         </div>
       ) : (
         <div className="space-y-4">
-          {filteredPages.map((page) => (
+          {filteredPages.map((page: any) => (
             <Link
               key={page.id}
               href={`/wiki/${page.slug}`}

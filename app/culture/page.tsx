@@ -31,9 +31,9 @@ export default function CulturePage() {
     }
   };
 
-  const categories = [...new Set(tools.map((t) => t.category))];
+  const categories = [...new Set(tools.map((t: any) => t.category))];
   const filteredTools = selectedCategory
-    ? tools.filter((t) => t.category === selectedCategory)
+    ? tools.filter((t: any) => t.category === selectedCategory)
     : tools;
 
   return (
@@ -66,7 +66,7 @@ export default function CulturePage() {
               >
                 All Tools
               </button>
-              {categories.map((category) => (
+              {categories.map((category: any) => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
@@ -91,7 +91,7 @@ export default function CulturePage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTools.map((tool) => (
+            {filteredTools.map((tool: any) => (
               <div key={tool.id} className="bg-slate-700 rounded-lg p-6 hover:bg-slate-600 transition-colors">
                 <h3 className="text-lg font-semibold text-white">{tool.name}</h3>
                 <p className="text-blue-400 text-sm mt-1">{tool.category}</p>

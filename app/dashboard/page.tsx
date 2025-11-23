@@ -116,7 +116,7 @@ export default async function DashboardPage() {
         <div className="bg-slate-700 rounded-lg p-6">
           <h2 className="text-2xl font-bold text-white mb-4">Recent Announcements</h2>
           <div className="space-y-4">
-            {announcements.map((announcement) => (
+            {announcements.map((announcement: any) => (
               <div
                 key={announcement.id}
                 className="p-4 bg-slate-800 rounded-lg border-l-4 border-blue-500"

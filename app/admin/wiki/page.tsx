@@ -126,7 +126,7 @@ export default function AdminWikiPage() {
 
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-lg font-semibold text-white mb-4">Pages ({pages.length})</h2>
-          {pages.map((page) => (
+          {pages.map((page: any) => (
             <div key={page.id} className="bg-slate-700 rounded-lg p-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1">

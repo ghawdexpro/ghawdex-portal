@@ -122,7 +122,7 @@ export default function AdminPoliciesPage() {
         </form>
 
         <div className="lg:col-span-2 space-y-4">
-          {policies.map((policy) => (
+          {policies.map((policy: any) => (
             <div key={policy.id} className="bg-slate-700 rounded-lg p-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1">

@@ -19,7 +19,7 @@ export default function AdminPage() {
       <p className="text-slate-400 mb-12">Manage all portal content and settings</p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sections.map((section) => (
+        {sections.map((section: any) => (
           <Link
             key={section.href}
             href={section.href}

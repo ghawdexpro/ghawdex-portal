@@ -215,7 +215,7 @@ export default function AdminCalendarPage() {
                     new Date(b.startDate).getTime() -
                     new Date(a.startDate).getTime()
                 )
-                .map((event) => (
+                .map((event: any) => (
                   <div
                     key={event.id}
                     className="bg-slate-700 rounded-lg p-4 flex items-start justify-between"

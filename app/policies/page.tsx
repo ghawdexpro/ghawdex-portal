@@ -32,9 +32,9 @@ export default function PoliciesPage() {
     }
   };
 
-  const categories = [...new Set(policies.map((p) => p.category))];
+  const categories = [...new Set(policies.map((p: any) => p.category))];
   const filteredPolicies = selectedCategory
-    ? policies.filter((p) => p.category === selectedCategory)
+    ? policies.filter((p: any) => p.category === selectedCategory)
     : policies;
 
   return (
@@ -54,7 +54,7 @@ export default function PoliciesPage() {
           >
             All Policies
           </button>
-          {categories.map((category) => (
+          {categories.map((category: any) => (
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
@@ -78,7 +78,7 @@ export default function PoliciesPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {filteredPolicies.map((policy) => (
+          {filteredPolicies.map((policy: any) => (
             <div key={policy.id} className="bg-slate-700 rounded-lg p-6">
               <div className="flex justify-between items-start mb-4">
                 <div>

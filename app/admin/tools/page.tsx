@@ -111,7 +111,7 @@ export default function AdminToolsPage() {
 
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-lg font-semibold text-white mb-4">Tools ({tools.length})</h2>
-          {tools.map((tool) => (
+          {tools.map((tool: any) => (
             <div key={tool.id} className="bg-slate-700 rounded-lg p-4">
               <div className="flex justify-between items-start">
                 <div className="flex-1">

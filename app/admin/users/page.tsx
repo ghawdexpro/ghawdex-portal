@@ -172,7 +172,7 @@ export default function AdminUsersPage() {
 
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-lg font-semibold text-white mb-4">Users ({users.length})</h2>
-          {users.map((user) => (
+          {users.map((user: any) => (
             <div
               key={user.id}
               className={`rounded-lg p-4 ${

@@ -5,7 +5,7 @@ export default async function TeamPage() {
     orderBy: { name: "asc" },
   });
 
-  const departments = [...new Set(teamMembers.map((m) => m.department))];
+  const departments = [...new Set(teamMembers.map((m: any) => m.department))];
 
   return (
     <div className="p-8">
@@ -17,13 +17,13 @@ export default async function TeamPage() {
         </div>
       ) : (
         <div className="space-y-8">
-          {departments.map((dept) => (
+          {departments.map((dept: any) => (
             <div key={dept}>
               <h2 className="text-2xl font-semibold text-blue-400 mb-4">{dept}</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {teamMembers
-                  .filter((m) => m.department === dept)
-                  .map((member) => (
+                  .filter((m: any) => m.department === dept)
+                  .map((member: any) => (
                     <div key={member.id} className="bg-slate-700 rounded-lg p-6">
                       {member.photo && (
                         <img

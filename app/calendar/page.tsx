@@ -8,10 +8,10 @@ export default async function CalendarPage() {
   });
 
   const upcomingEvents = events.filter(
-    (event) => new Date(event.startDate) >= new Date()
+    (event: any) => new Date(event.startDate) >= new Date()
   );
   const pastEvents = events.filter(
-    (event) => new Date(event.startDate) < new Date()
+    (event: any) => new Date(event.startDate) < new Date()
   );
 
   const getEventColor = (type: string) => {
@@ -56,7 +56,7 @@ export default async function CalendarPage() {
           </h2>
           {upcomingEvents.length > 0 ? (
             <div className="space-y-4">
-              {upcomingEvents.map((event) => (
+              {upcomingEvents.map((event: any) => (
                 <div
                   key={event.id}
                   className={`p-4 rounded-lg border-l-4 ${getEventColor(
@@ -129,7 +129,7 @@ export default async function CalendarPage() {
           </h2>
           {pastEvents.length > 0 ? (
             <div className="space-y-4">
-              {pastEvents.slice(-10).reverse().map((event) => (
+              {pastEvents.slice(-10).reverse().map((event: any) => (
                 <div
                   key={event.id}
                   className={`p-4 rounded-lg border-l-4 ${getEventColor(
@@ -184,13 +184,13 @@ export default async function CalendarPage() {
           <div className="bg-blue-700/20 rounded-lg p-4">
             <p className="text-slate-400 text-sm">Meetings</p>
             <p className="text-3xl font-bold text-blue-400">
-              {events.filter((e) => e.type === "meeting").length}
+              {events.filter((e: any) => e.type === "meeting").length}
             </p>
           </div>
           <div className="bg-red-700/20 rounded-lg p-4">
             <p className="text-slate-400 text-sm">Deadlines</p>
             <p className="text-3xl font-bold text-red-400">
-              {events.filter((e) => e.type === "deadline").length}
+              {events.filter((e: any) => e.type === "deadline").length}
             </p>
           </div>
           <div className="bg-green-700/20 rounded-lg p-4">

@@ -143,7 +143,7 @@ export default function AdminAnnouncementsPage() {
 
         <div className="lg:col-span-2">
           <div className="space-y-4">
-            {announcements.map((ann) => (
+            {announcements.map((ann: any) => (
               <div key={ann.id} className="bg-slate-700 rounded-lg p-4">
                 <div className="flex justify-between items-start mb-2">
                   <div>
