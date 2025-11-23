@@ -7,11 +7,12 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  // Auth checking is done in the page component
+  const role = "EMPLOYEE"; // Default role, overridden in pages
 
   return (
     <div className="flex">
-      <Sidebar role={session?.user?.role || "EMPLOYEE"} />
+      <Sidebar role={role} />
       <main className="flex-1 bg-gradient-to-br from-slate-900 to-slate-800">
         {children}
       </main>

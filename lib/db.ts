@@ -46,7 +46,7 @@ export async function getDB() {
 
     user: {
       findMany: async (opts?: { select?: any }) => {
-        let query = supabase.from('User');
+        let query: any = supabase.from('User');
         // If specific columns requested, build select string
         if (opts?.select) {
           const columns = Object.keys(opts.select).filter(k => opts.select[k]).join(',');

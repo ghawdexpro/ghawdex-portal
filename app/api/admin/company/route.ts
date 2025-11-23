@@ -29,18 +29,12 @@ export async function POST(request: Request) {
     const db = await getDB();
     const existingCompany = await db.companyInfo.findFirst();
 
-    if (existingCompany) {
-      const updated = await db.companyInfo.update({
-        where: { id: existingCompany.id },
-        data: { mission, vision, values },
-      });
-      return NextResponse.json(updated);
-    } else {
-      const created = await db.companyInfo.create({
-        data: { mission, vision, values },
-      });
-      return NextResponse.json(created);
-    }
+    const result = await db.companyInfo.upsert({
+      where: { id: existingCompany?.id || 'default' },
+      create: { mission, vision, values },
+      update: { mission, vision, values },
+    });
+    return NextResponse.json(result);
   } catch (error: any) {
     if (error.message === "Unauthorized") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
