@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { useState } from "react";
 
 interface SidebarProps {
   role: string;
@@ -10,8 +11,23 @@ interface SidebarProps {
 
 export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const supabase = createClient();
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const isActive = (path: string) => pathname === path;
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await supabase.auth.signOut();
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      console.error("Sign out error:", error);
+      setIsSigningOut(false);
+    }
+  };
 
   const baseLinks = [
     { href: "/dashboard", label: "Dashboard", icon: "📊" },
@@ -55,10 +71,11 @@ export function Sidebar({ role }: SidebarProps) {
 
       <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-700">
         <button
-          onClick={() => signOut()}
-          className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm font-medium"
+          onClick={handleSignOut}
+          disabled={isSigningOut}
+          className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white rounded-lg transition-colors text-sm font-medium"
         >
-          Sign Out
+          {isSigningOut ? "Signing out..." : "Sign Out"}
         </button>
       </div>
     </aside>
