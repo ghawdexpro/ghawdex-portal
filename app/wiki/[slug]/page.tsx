@@ -3,15 +3,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 interface WikiPageDetailProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default async function WikiPageDetail({ params }: WikiPageDetailProps) {
+  const resolvedParams = await params;
   const db = await getDB();
   const page = await db.wikiPage.findUnique({
-    where: { slug: params.slug },
+    where: { slug: resolvedParams.slug },
   });
 
   if (!page || !page.published) {
