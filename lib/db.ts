@@ -45,8 +45,16 @@ export async function getDB() {
     },
 
     user: {
-      findMany: async () => {
-        const { data, error } = await supabase.from('User').select('*');
+      findMany: async (opts?: { select?: any }) => {
+        let query = supabase.from('User');
+        // If specific columns requested, build select string
+        if (opts?.select) {
+          const columns = Object.keys(opts.select).filter(k => opts.select[k]).join(',');
+          query = query.select(columns || '*');
+        } else {
+          query = query.select('*');
+        }
+        const { data, error } = await query;
         if (error) throw error;
         return data || [];
       },
@@ -88,8 +96,12 @@ export async function getDB() {
     },
 
     teamMember: {
-      findMany: async () => {
-        const { data, error } = await supabase.from('TeamMember').select('*');
+      findMany: async (opts?: { orderBy?: any }) => {
+        let query = supabase.from('TeamMember').select('*');
+        if (opts?.orderBy?.name === 'asc') {
+          query = query.order('name', { ascending: true });
+        }
+        const { data, error } = await query;
         if (error) throw error;
         return data || [];
       },
@@ -123,8 +135,15 @@ export async function getDB() {
     },
 
     policy: {
-      findMany: async () => {
-        const { data, error } = await supabase.from('Policy').select('*');
+      findMany: async (opts?: { where?: any, orderBy?: any }) => {
+        let query = supabase.from('Policy').select('*');
+        if (opts?.where?.status) {
+          query = query.eq('status', opts.where.status);
+        }
+        if (opts?.orderBy?.createdAt === 'desc') {
+          query = query.order('createdAt', { ascending: false });
+        }
+        const { data, error } = await query;
         if (error) throw error;
         return data || [];
       },
@@ -158,8 +177,15 @@ export async function getDB() {
     },
 
     goal: {
-      findMany: async () => {
-        const { data, error } = await supabase.from('Goal').select('*');
+      findMany: async (opts?: { where?: any, orderBy?: any }) => {
+        let query = supabase.from('Goal').select('*');
+        if (opts?.where?.status) {
+          query = query.eq('status', opts.where.status);
+        }
+        if (opts?.orderBy?.createdAt === 'desc') {
+          query = query.order('createdAt', { ascending: false });
+        }
+        const { data, error } = await query;
         if (error) throw error;
         return data || [];
       },
@@ -193,8 +219,12 @@ export async function getDB() {
     },
 
     procedure: {
-      findMany: async () => {
-        const { data, error } = await supabase.from('Procedure').select('*');
+      findMany: async (opts?: { orderBy?: any }) => {
+        let query = supabase.from('Procedure').select('*');
+        if (opts?.orderBy?.createdAt === 'desc') {
+          query = query.order('createdAt', { ascending: false });
+        }
+        const { data, error } = await query;
         if (error) throw error;
         return data || [];
       },
@@ -228,8 +258,15 @@ export async function getDB() {
     },
 
     wikiPage: {
-      findMany: async () => {
-        const { data, error } = await supabase.from('WikiPage').select('*');
+      findMany: async (opts?: { where?: any, orderBy?: any }) => {
+        let query = supabase.from('WikiPage').select('*');
+        if (opts?.where?.published) {
+          query = query.eq('published', opts.where.published);
+        }
+        if (opts?.orderBy?.createdAt === 'desc') {
+          query = query.order('createdAt', { ascending: false });
+        }
+        const { data, error } = await query;
         if (error) throw error;
         return data || [];
       },
@@ -271,8 +308,12 @@ export async function getDB() {
     },
 
     tool: {
-      findMany: async () => {
-        const { data, error } = await supabase.from('Tool').select('*');
+      findMany: async (opts?: { orderBy?: any }) => {
+        let query = supabase.from('Tool').select('*');
+        if (opts?.orderBy?.category === 'asc') {
+          query = query.order('category', { ascending: true });
+        }
+        const { data, error } = await query;
         if (error) throw error;
         return data || [];
       },
@@ -306,8 +347,14 @@ export async function getDB() {
     },
 
     calendarEvent: {
-      findMany: async () => {
-        const { data, error } = await supabase.from('CalendarEvent').select('*');
+      findMany: async (opts?: { orderBy?: any }) => {
+        let query = supabase.from('CalendarEvent').select('*');
+        if (opts?.orderBy?.startDate === 'desc') {
+          query = query.order('startDate', { ascending: false });
+        } else if (opts?.orderBy?.startDate === 'asc') {
+          query = query.order('startDate', { ascending: true });
+        }
+        const { data, error } = await query;
         if (error) throw error;
         return data || [];
       },
