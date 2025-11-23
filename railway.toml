@@ -12,4 +12,4 @@ healthcheckTimeout = 30
 NODE_ENV = "production"
 
 [start]
-cmd = "npx prisma migrate deploy && npm start"
+cmd = "npm start"
