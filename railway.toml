@@ -10,3 +10,6 @@ healthcheckTimeout = 30
 
 [env]
 NODE_ENV = "production"
+
+[start]
+cmd = "npx prisma migrate deploy && npm run db:seed && npm start"
