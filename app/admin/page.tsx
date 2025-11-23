@@ -1,6 +1,62 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AdminPage() {
+  const router = useRouter();
+  const supabase = createClient();
+  const [session, setSession] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!session) {
+          router.push("/login");
+          return;
+        }
+
+        setSession(session);
+
+        // Fetch user profile to check if admin
+        try {
+          const response = await fetch("/api/admin/users");
+          if (response.status === 403) {
+            // Not admin
+            router.push("/dashboard");
+            return;
+          }
+        } catch (err) {
+          console.error("Failed to check admin status:", err);
+        }
+
+        setLoading(false);
+      } catch (err) {
+        router.push("/login");
+      }
+    };
+
+    checkAuth();
+  }, [router, supabase]);
+
+  if (loading) {
+    return (
+      <div className="p-8 flex items-center justify-center min-h-screen">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null;
+  }
+
   const sections = [
     { href: "/admin/company", label: "Company Info", icon: "🏢" },
     { href: "/admin/announcements", label: "Announcements", icon: "📢" },
