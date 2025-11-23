@@ -1,9 +1,10 @@
-import { prisma } from "@/lib/prisma";
+import { getDB } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
 export default async function CalendarPage() {
-  const events = await prisma.calendarEvent.findMany({
+  const db = await getDB();
+  const events = await db.calendarEvent.findMany({
     orderBy: { startDate: "asc" },
   });
 

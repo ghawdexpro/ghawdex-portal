@@ -1,7 +1,8 @@
-import { prisma } from "@/lib/prisma";
+import { getDB } from "@/lib/db";
 
 export default async function CompanyPage() {
-  const companyInfo = await prisma.companyInfo.findFirst();
+  const db = await getDB();
+  const companyInfo = await db.companyInfo.findFirst();
 
   return (
     <div className="p-8 max-w-4xl">

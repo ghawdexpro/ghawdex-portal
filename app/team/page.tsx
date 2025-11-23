@@ -1,7 +1,8 @@
-import { prisma } from "@/lib/prisma";
+import { getDB } from "@/lib/db";
 
 export default async function TeamPage() {
-  const teamMembers = await prisma.teamMember.findMany({
+  const db = await getDB();
+  const teamMembers = await db.teamMember.findMany({
     orderBy: { name: "asc" },
   });
 

@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import { getDB } from "@/lib/db";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -9,7 +9,8 @@ interface WikiPageDetailProps {
 }
 
 export default async function WikiPageDetail({ params }: WikiPageDetailProps) {
-  const page = await prisma.wikiPage.findUnique({
+  const db = await getDB();
+  const page = await db.wikiPage.findUnique({
     where: { slug: params.slug },
   });
 
