@@ -1,0 +1,14 @@
+{
+  "project": "ghawdex-portal",
+  "build": {
+    "builder": "nixpacks"
+  },
+  "deploy": {
+    "startCommand": "npm start",
+    "restartPolicyType": "on_failure",
+    "restartPolicyMaxRetries": 3,
+    "numReplicas": 1,
+    "healthcheckPath": "/",
+    "healthcheckTimeout": 30
+  }
+}
